@@ -1,0 +1,47 @@
+﻿@model IEnumerable<LibanonWebApp.Models.Book>
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    WebGrid grid = new WebGrid(source: Model, rowsPerPage: 10);
+}
+
+<div class="card">
+    <div class="card-body">
+        <h2>Bookshelf</h2>
+        <ul class="nav nav-pills nav-justified">
+            <li class="nav-item"><a class="nav-link active" href="@Url.Action("Index","Book")">Bookshelf</a></li>
+            <li class="nav-item"><a class="nav-link" href="@Url.Action("BorrowedBooks","Book")">Borrowed books</a></li>
+        </ul>
+
+        <br />
+        <div class="col-md-6 mb-md-3">
+            @Html.ActionLink("Add book", "Create", null, htmlAttributes: new { @class = "btn btn-sm btn-warning font-weight-bold " })
+        </div>
+
+        @if (grid != null)
+        {
+            <div id="list" class="table-responsive">
+                @grid.GetHtml(
+                      tableStyle: "table table-bordered table-hover",
+                      headerStyle: "",
+                      footerStyle: "text-center",
+                      numericLinksCount: 10,
+                      mode: WebGridPagerModes.All, firstText: "First", lastText: "Last",
+                      columns: grid.Columns(
+                          grid.Column("BookId", "Id"),
+                          grid.Column("Title", "Title"),
+                          grid.Column("Author", "Author"),
+                          grid.Column("Image", "Image", format: b => Html.Raw("<img width=\"150\" height=\"150\" src=\"../Content/Image/" + b.Image + "\">")),
+                          grid.Column("ISBN.ISBNCode", "ISBN Code"),
+                          grid.Column("ISBN.RatingScore", "Rating"),
+                          grid.Column("Owner.OwnerName", "Owner Name"),
+                          grid.Column("Owner.OwnerEmail", "Owner Email"),
+                          grid.Column(format: b => Html.ActionLink("Update", "Update", new { id = b.BookId})),
+                          grid.Column(format: b => Html.ActionLink("Borrow", "BorrowBook", new { id = b.BookId }))
+                          )
+                      )
+            </div>
+        }
+    </div>
+</div>
+
